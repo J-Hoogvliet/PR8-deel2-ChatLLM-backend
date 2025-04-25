@@ -1,7 +1,6 @@
 import {AzureChatOpenAI, AzureOpenAIEmbeddings} from "@langchain/openai";
 import {TextLoader} from "langchain/document_loaders/fs/text";
 import {RecursiveCharacterTextSplitter} from "langchain/text_splitter";
-import {MemoryVectorStore} from "langchain/vectorstores/memory";
 import { FaissStore} from "@langchain/community/vectorstores/faiss";
 
 const model = new AzureChatOpenAI({temperature: 1});
@@ -13,7 +12,7 @@ const embeddings = new AzureOpenAIEmbeddings({
     azureOpenAIApiEmbeddingsDeploymentName: process.env.AZURE_EMBEDDING_DEPLOYMENT_NAME
 });
 
-async function loadStarWarsStory() {
+async function loadCircuits() {
     const loader = new TextLoader("./public/circuit_brandstof_info.txt")
     const docs = await loader.load()
     const textSplitter = new RecursiveCharacterTextSplitter({chunkSize: 400, chunkOverlap: 20})
@@ -38,5 +37,5 @@ async function askQuestion(prompt) {
     console.log(response.content)
 }
 
-await loadStarWarsStory()
+await loadCircuits()
 await askQuestion("What is the fun fact")
