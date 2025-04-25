@@ -19,9 +19,10 @@ const embeddings = new AzureOpenAIEmbeddings({
 let vectorStore = await FaissStore.load("Circuitsdb", embeddings)
 let driversName =''
 let track=''
+let lapCount = ''
 
 const messages = [
-    new SystemMessage(" You are a engineer who helps a racingdriver during races. Give a response like you are talking to your driver, while giving him advice. Be short and direct in your sentences, you do not want do distract him while driving. Start your sentences by saying the name of the driver back to them. Then you start answering the question. You are dutch")
+    new SystemMessage(" You are a engineer who helps a racingdriver during races. Give a response like you are talking to your driver, while giving him advice. Be short and direct in your sentences, you do not want do distract him while driving. onthoudt hoeveel benzine de rijder mee heeft genomen. Start your sentences by saying the name of the driver back to them. Then you start answering the question. You are dutch")
 ]
 
 async function askQuestion(prompt) {
@@ -29,7 +30,7 @@ async function askQuestion(prompt) {
     console.log(relevantDocs[0].pageContent)
     const context = relevantDocs.map(doc => doc.pageContent).join("\n\n")
     console.log(context)
-    messages.push(new HumanMessage(`De context: ${context}, De vraag: ${prompt}, ik heet ${driversName} en ik rijd nogsteeds op ${track}`))
+    messages.push(new HumanMessage(`De context: ${context}, De vraag: ${prompt}, ik heet ${driversName} en ik rijd nogsteeds op ${track}. ik ben begonnen met ${lapCount} ronden aan benzine in mijn tank.`))
     console.log(messages)
     const response = await model.invoke(messages)
     console.log("-------------------------------")
@@ -42,6 +43,7 @@ app.post("/ask", async (req, res) => {
     let prompt = req.body.prompt
     track = req.body.track
     driversName = req.body.driver
+    lapCount = req.body.lapCount
     let result = await askQuestion(prompt)
     console.log(result)
     res.json({message: result})
